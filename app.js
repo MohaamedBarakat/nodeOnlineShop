@@ -17,5 +17,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(errorController.get404);
-//console.log("server on fire");
+
+
 app.listen(3000);
