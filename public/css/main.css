@@ -222,3 +222,8 @@ form {
         display: none;
     }
 }
+
+.cart {
+    display: inline-block;
+    border: 1px;
+}

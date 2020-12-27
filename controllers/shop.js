@@ -1,5 +1,4 @@
 const Product = require('../models/product');
-const Cart = require('../models/cart');
 exports.getProducts = (req, res, next) => {
     Product.findAll()
         .then(products => {
@@ -52,41 +51,104 @@ exports.getIndex = (req, res, next) => {
 
 };
 exports.getCart = (req, res, next) => {
-    Cart.getProducts(cart => {
-        Product.fetchAll(products => {
-            const cartProducts = [];
-            for (product of products) {
-                const cartProductData = cart.products.find(prod => prod.id === product.id);
-                if (cart.products.find(prod => prod.id === product.id)) {
-                    cartProducts.push({ productData: product, qty: cartProductData.qty });
-                }
-            }
-            res.render('shop/cart', { pageTitle: 'Your Cart', path: '/cart', products: cartProducts });
-        });
+    req.user.getCart()
+        .then(cart => {
+            return cart.getProducts()
+                .catch(err => {
+                    console.log(err);
+                })
 
-    });
+        })
+        .then(products => {
+            res.render('shop/cart', {
+                pageTitle: 'Your Cart',
+                path: '/cart',
+                products: products
+            });;
+        })
+        .catch(err => console.log(err));
 
 };
 exports.postCartDeleteProduct = (req, res, next) => {
     const prodId = req.body.productId;
-    Product.findtById(prodId, product => {
-        Cart.deleteProduct(prodId, product.price);
-    });
-    res.redirect('/cart');
+    req.user.getCart()
+        .then(cart => {
+            return cart.getProducts({ where: { id: prodId } });
+        }).then(products => {
+            const product = products[0];
+            return product.cartItem.destroy();
+        }).then(result => {
+            res.redirect('/cart');
+        })
+        .catch(err => console.log(err))
+
+
 
 
 }
 exports.postCart = (req, res, next) => {
     const prodId = req.body.productId;
-    Product.findtById(prodId, product => {
-        Cart.addProduct(prodId, product.price);
+    let FetchedCart;
+    let newQuantity = 1;
+    req.user.getCart()
+        .then(cart => {
+            FetchedCart = cart;
+            return cart.getProducts({
+                    where: { id: prodId }
+                })
+                .catch(err => console.log(err));
 
-    })
-    res.redirect('/cart');
+        })
+        .then(products => {
+            let product;
+            if (products.length > 0) {
+                product = products[0];
+            }
+
+            if (product) {
+                const oldQuantity = product.cartItem.quantity;
+                newQuantity = oldQuantity + 1;
+                return product;
+            }
+            return Product.findByPk(prodId)
+        })
+        .then(product => {
+            return FetchedCart.addProduct(product, {
+                through: {
+                    quantity: newQuantity
+                }
+            });
+        })
+        .then(() => {
+            res.redirect('/cart');
+        })
+        .catch(err => console.log(err))
 }
 exports.getCheckout = (req, res, next) => {
     res.render('shop/checkout', { pageTitle: 'Checkout', path: '/checkout' });
 };
+exports.postOrder = (req, res, next) => {
+    req.user.getCart()
+        .then((cart) => {
+            return cart.getProducts()
+                .catch(err => console.log(err))
+        }).then(products => {
+            return req.user.createOrder()
+                .then((order) => {
+                    return order.addProduct(products.map(product => {
+                        product.orderItem = { quantity: product.cartItem.quantity };
+                        return product;
+                    }))
+                })
+                .catch(err => console.log(err))
+
+        })
+        .then((result) => {
+            res.redirect('orders');
+
+        })
+        .catch(err => console.log(err))
+}
 exports.getOrders = (req, res, next) => {
     res.render('shop/orders', { pageTitle: 'Your Orders', path: '/orders' });
 };
