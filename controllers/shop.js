@@ -128,8 +128,10 @@ exports.getCheckout = (req, res, next) => {
     res.render('shop/checkout', { pageTitle: 'Checkout', path: '/checkout' });
 };
 exports.postOrder = (req, res, next) => {
+    let fetchedCart;
     req.user.getCart()
         .then((cart) => {
+            fetchedCart = cart;
             return cart.getProducts()
                 .catch(err => console.log(err))
         }).then(products => {
@@ -144,11 +146,23 @@ exports.postOrder = (req, res, next) => {
 
         })
         .then((result) => {
-            res.redirect('orders');
+            return fetchedCart.setProducts(null);
 
+
+        }).then(result => {
+            res.redirect('/orders');
         })
         .catch(err => console.log(err))
 }
 exports.getOrders = (req, res, next) => {
-    res.render('shop/orders', { pageTitle: 'Your Orders', path: '/orders' });
+    req.user.getOrders({ include: ['products'] })
+        .then(orders => {
+            res.render('shop/orders', {
+                pageTitle: 'Your Orders',
+                path: '/orders',
+                orders: orders
+            });
+        })
+        .catch(err => console.log(err));
+
 };
