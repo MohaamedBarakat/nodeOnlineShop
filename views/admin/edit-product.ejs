@@ -35,9 +35,9 @@
                         <textarea name="description" id="description" rows="5" required><% if (edit) { %><%= product.description %><% } %> </textarea>
                     </div>
                     <% if (edit) { %>
-                        <input type="hidden" value="<%= product.id %>" name="productId">
+                        <input type="hidden" value="<%= product._id %>" name="productId">
                         <% } %>
-
+                            <input type="hidden" name="_csrf" value="<%= csrfToken%>">
                             <button class="btn" type="submit"><% if (edit) { %>Update Product<% } else { %>Add Product<% } %></button>
                 </form>
             </main>
