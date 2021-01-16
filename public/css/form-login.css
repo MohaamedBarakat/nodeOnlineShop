@@ -1,0 +1,103 @@
+.form-control {
+    margin: 1rem 0;
+}
+
+.form-control label,
+.form-control input,
+.form-control textarea,
+.form-control select {
+    background-color: transparent;
+    display: block;
+    width: 100%;
+    margin-bottom: 0.25rem;
+    border-radius: 5px;
+}
+
+.form-control input,
+.form-control textarea {
+    border: 1px solid #000e4d;
+    font: inherit;
+}
+
+.form-control input:focus,
+.form-control textarea:focus {
+    outline-color: #100069;
+    border-radius: 2px;
+}
+
+.form-login {
+    height: 60%;
+    width: 30%;
+    background: transparent;
+    border: 1px solid;
+    border-radius: 5rem;
+    overflow: auto;
+    position: absolute;
+    z-index: 15;
+    top: 30%;
+    left: 40%;
+    margin: -100px 0 0 -150px;
+    font-weight: bold;
+}
+
+.btn-login {
+    display: inline-block;
+    padding: 0.25rem 1rem;
+    text-decoration: none;
+    font: inherit;
+    border: 1px solid #070235;
+    color: #f8f8f8;
+    background: #03102c;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.btn-login:hover {
+    background: rgb(180, 180, 207);
+}
+
+.centered {
+    margin-top: 3rem;
+}
+
+.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    height: 30%;
+    margin-top: 0.8rem;
+}
+
+a:link {
+    color: rgb(168, 167, 202);
+}
+
+a:visited {
+    color: rgb(168, 167, 202);
+}
+
+a:hover {
+    color: rgb(174, 174, 206);
+}
+
+a:active {
+    color: blue;
+}
+
+::placeholder {
+    color: rgb(182, 185, 212);
+}
+
+button {
+    height: 40px;
+    width: 100px;
+    margin: -20px -50px;
+    margin-top: 10px;
+    position: relative;
+    top: 50%;
+    left: 50%;
+}
+
+.login-form input.invalid {
+    border-color: red;
+}

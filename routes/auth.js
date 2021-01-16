@@ -1,18 +1,48 @@
 const express = require('express');
 
+const { check, body } = require('express-validator/check');
+
 const authController = require('../controllers/auth');
+
+const User = require('../models/user');
 
 const router = express.Router();
 
 router.get('/login', authController.getLogin);
 
-router.post('/login', authController.postLogin);
+router.post('/login', [
+    check('email')
+    .isEmail()
+    .withMessage('Enter a valid E-mail.')
+    .custom((value, { req }) => {
+        User.findOne({ email: value })
+            .then(user => {
+                if (!user) {
+                    return Promise.reject('Invalid email  or password');
+                }
+            })
+    }),
+    body('password')
+    .isLength({ min: 5, max: 24 })
+    .withMessage('password should at least 8 Characters')
+], authController.postLogin);
 
 router.post('/logout', authController.postLogout);
 
 router.get('/signup', authController.getSignup);
 
-router.post('/signup', authController.postSignup);
+router.post('/signup', [
+    check('email')
+    .isEmail()
+    .withMessage('Please Enter a valid email.'),
+    body('password').isLength({ min: 5, max: 24 }).withMessage('Please enter a password with at least 8 charatres').isAlphanumeric(),
+    body('confirmPassword').custom((value, { req }) => {
+        if (value !== req.body.password) {
+            throw new Error('Password have to match!');
+        }
+        return true;
+    })
+], authController.postSignup);
 
 router.get('/reset', authController.getReset);
 

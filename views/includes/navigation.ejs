@@ -1,4 +1,6 @@
-<div class="backdrop"></div>
+<div class="backdrop">
+
+</div>
 <header class="main-header">
     <button id="side-menu-toggle">Menu</button>
     <nav class="main-header__nav">
@@ -24,7 +26,17 @@
                     <a class="<%= path === '/admin/products' ? 'active' : '' %>" href="/admin/products">Admin Products
                     </a>
                 </li>
-                <% } %>
+                <%if(req.adminId.toString()===req.userId.toString()){%>
+                    <li class="main-header__item">
+                        <a class="<%= path === '/admin/request' ? 'active' : '' %>" href="/admin/request">Products requests
+                    </a>
+                    </li>
+                    <li class="main-header__item">
+                        <a class="<%= path === '/admin/log' ? 'active' : '' %>" href="/admin/log">Products log
+                    </a>
+                    </li>
+                    <%}%>
+                        <% } %>
         </ul>
         <ul class="main-header__item-list">
             <% if (!isAuthenticated) { %>

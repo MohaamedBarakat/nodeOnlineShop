@@ -3,11 +3,13 @@ const bcrypt = require('bcryptjs');
 const api_key = "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";
 const sendgrid = require('@sendgrid/mail');
 const crypto = require('crypto');
+const { validationResult } = require('express-validator/check');
 sendgrid.setApiKey(api_key);
 exports.getLogin = (req, res, next) => {
     //const isLoggedIn = req.get('Cookie').split('=')[1].trim() === 'true';
     // console.log(req.session.isLoggedIn);
     let message = req.flash('error');
+    const errors = validationResult(req);
     if (message.length > 0) {
         message = message[0];
     } else {
@@ -16,17 +18,44 @@ exports.getLogin = (req, res, next) => {
     res.render('auth/login', {
         pageTitle: 'Login',
         path: '/login',
-        errorMessage: message
+        errorMessage: message,
+        oldInput: {
+            email: '',
+            password: ''
+        },
+        validationErrors: errors.array()
     })
 };
 exports.postLogin = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
+    const errors = validationResult(req);
+    if (errors.isEmpty()) {
+        console.log(errors.isEmpty());
+        return res.status(422).render('auth/login', {
+            path: '/login',
+            pageTitle: 'Login',
+            errorMessage: 'Invalid email or password',
+            oldInput: {
+                email: email,
+                password: password
+            },
+            validationErrors: errors.array()
+        });
+    }
     User.findOne({ email: email })
         .then(user => {
             if (!user) {
-                req.flash('error', 'Invalid email or password');
-                return res.redirect('/login');
+                return res.status(422).render('auth/login', {
+                    path: '/login',
+                    pageTitle: 'Login',
+                    errorMessage: 'Invalid email or password.',
+                    oldInput: {
+                        email: email,
+                        password: password
+                    },
+                    validationErrors: []
+                });
             }
             bcrypt.compare(password, user.password)
                 .then(doMatch => {
@@ -38,8 +67,16 @@ exports.postLogin = (req, res, next) => {
                             res.redirect('/');
                         });
                     } else {
-                        req.flash('error', 'Invalid email or password');
-                        return res.redirect('/login');
+                        return res.status(422).render('auth/login', {
+                            path: '/login',
+                            pageTitle: 'Login',
+                            errorMessage: 'Invalid email or password.',
+                            oldInput: {
+                                email: email,
+                                password: password
+                            },
+                            validationErrors: errors.array()
+                        });
                     }
                     r
                 })
@@ -68,46 +105,60 @@ exports.getSignup = (req, res, next) => {
     res.render('auth/signup', {
         pageTitle: 'Signup',
         path: '/signup',
-        errorMessage: message
+        errorMessage: message,
+        oldInput: {
+            name: "",
+            email: "",
+            password: "",
+            confirmPassword: ""
+        },
+        validationErrors: []
     });
 };
 exports.postSignup = (req, res, next) => {
     const name = req.body.name;
     const email = req.body.email;
     const password = req.body.password;
-    const confirmPassword = req.body.confirmPassword;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).render('auth/signup', {
+            pageTitle: 'Signup',
+            path: '/signup',
+            errorMessage: errors.array()[0].msg,
+            oldInput: {
+                name: name,
+                email: email,
+                password: password,
+                confirmPassword: req.body.confirmPassword
+            },
+            validationErrors: errors.array()
 
-    User.findOne({ email: email })
-        .then(userDoc => {
-            if (userDoc) {
-                req.flash('error', 'E-Mail exists already, please pick different one.');
-                return res.redirect('/signup');
-            }
-            return bcrypt.hash(password, 12)
-                .then(hashedPassword => {
-                    const user = new User({
-                        name: name,
-                        email: email,
-                        password: hashedPassword,
-                        cart: { items: [] }
-                    });
-                    return user.save();
-                })
-                .then(result => {
-                    res.redirect('/login');
-                    const message = {
-                        to: email,
-                        from: "muhammad.barakat70@gmail.com",
-                        subject: "Signup succeeded!",
-                        html: "<h1>You are successfully signed up</h1>"
-                    };
-                    sendgrid
-                        .send(message)
+        });
+    }
+    bcrypt.hash(password, 12)
+        .then(hashedPassword => {
+            const user = new User({
+                name: name,
+                email: email,
+                password: hashedPassword,
+                cart: { items: [] }
+            });
+            return user.save();
+        })
+        .then(result => {
+            res.redirect('/login');
+            const message = {
+                to: email,
+                from: "muhammad.barakat70@gmail.com",
+                subject: "Signup succeeded!",
+                html: "<h1>You are successfully signed up</h1>"
+            };
+            sendgrid
+                .send(message)
 
-                    .then(() => {
-                        console.log('email sent');
-                    });
-                });
+            .then(() => {
+                console.log('email sent');
+            });
         })
         .catch(err => {
             console.log(err);

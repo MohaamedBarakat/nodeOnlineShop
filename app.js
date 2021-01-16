@@ -4,7 +4,6 @@ const path = require('path');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDbStore = require('connect-mongodb-session')(session);
-const { MongoClient } = require('mongodb');
 const csrf = require('csurf');
 const flash = require('connect-flash');
 
@@ -53,6 +52,7 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
     res.locals.isAuthenticated = req.session.isLoggedIn;
     res.locals.csrfToken = req.csrfToken();
+    req.adminId = '5ffb7cb166d4a894a36a3df2';
     next();
 
 });
@@ -62,8 +62,9 @@ app.use(shopRoutes);
 app.use(authRoutes);
 app.use(errorController.get404);
 mongoose
-    .connect(mongoDb_URI)
+    .connect(mongoDb_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(res => {
-        app.listen(3000);
+        console.log('app on fire at port 4000');
+        app.listen(4000);
     })
     .catch(err => console.log(err));

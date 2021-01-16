@@ -1,14 +1,14 @@
 const Product = require('../models/product');
-
+const Request = require('../models/request');
+const Log = require('../models/log-product');
 exports.getAddProduct = (req, res, next) => {
     res.render('admin/edit-product', {
         pageTitle: 'Add Product',
         path: '/admin/add-product',
         edit: false,
-        isAuthenticated: req.session.isLoggedIn
+        req: { adminId: req.adminId, userId: req.user._id }
     });
 };
-
 exports.postAddProduct = (req, res, next) => {
     const category = req.body.category;
     const title = req.body.title;
@@ -23,16 +23,19 @@ exports.postAddProduct = (req, res, next) => {
         imageUrl: imageUrl,
         userId: req.user
     });
-    product
-        .save()
+    const requestedProduct = new Request({
+        product: product,
+        userName: req.user.name,
+        status: 'Create New Product'
+    });
+    requestedProduct.save()
         .then(result => {
-            console.log('Created Product');
+            console.log('Product On Requested List');
             res.redirect('/admin/products');
         })
         .catch(err => console.log(err));
 
 };
-
 exports.getEditProduct = (req, res, next) => {
     const editMode = req.query.edit;
     if (!editMode) {
@@ -49,13 +52,13 @@ exports.getEditProduct = (req, res, next) => {
                 path: '/admin/edit-product',
                 edit: editMode,
                 product: product,
-                isAuthenticated: req.session.isLoggedIn
+                req: { adminId: req.adminId, userId: req.user._id }
+
             })
         })
         .catch(err => console.log(err))
 
 };
-
 exports.postEditProduct = (req, res, next) => {
     const prodId = req.body.productId;
     const updatedCategory = req.body.category;
@@ -83,24 +86,43 @@ exports.postEditProduct = (req, res, next) => {
         .catch(err => console.log(err))
 
 };
-
 exports.getProducts = (req, res, next) => {
-    Product.find({ userId: req.user._id })
-        //.select('title price -_id')
-        //.populate('userId', 'name')
-        .then(products => {
-            //console.log(products);
-            res.render('admin/products', {
-                prods: products,
-                pageTitle: 'Admin Products',
-                path: '/admin/products',
-                edit: true,
-                isAuthenticated: req.session.isLoggedIn
-            });
-        })
-        .catch(err => console.log(err));
-};
+    console.log(req.adminId);
+    if (req.adminId.toString() !== req.user._id.toString()) {
+        Product.find({ userId: req.user._id })
+            //.select('title price -_id')
+            //.populate('userId', 'name')
+            .then(products => {
+                //console.log(products);
+                res.render('admin/products', {
+                    prods: products,
+                    pageTitle: 'Admin Products',
+                    path: '/admin/products',
+                    edit: true,
+                    req: { adminId: req.adminId, userId: req.user._id }
 
+                });
+            })
+            .catch(err => console.log(err));
+    } else {
+        Product.find()
+            //.select('title price -_id')
+            //.populate('userId', 'name')
+            .then(products => {
+                //console.log(products);
+                res.render('admin/products', {
+                    prods: products,
+                    pageTitle: 'Admin Products',
+                    path: '/admin/products',
+                    edit: true,
+                    req: { adminId: req.adminId, userId: req.user._id }
+
+                });
+            })
+            .catch(err => console.log(err));
+    }
+
+};
 exports.postDeleteProduct = (req, res, next) => {
     const prodId = req.body.productId;
     Product.deleteOne({ _id: prodId, userId: req.user._id })
@@ -112,5 +134,63 @@ exports.postDeleteProduct = (req, res, next) => {
             res.redirect('/admin/products');
         })
         .catch(err => console.log(err));
+
+};
+exports.getRequest = (req, res, next) => {
+    Request.find()
+        .then((user) => {
+            //console.log(user);
+            res.render('admin/request', {
+                products: user,
+                pageTitle: 'Products Request',
+                path: '/admin/request',
+                user: req.user,
+                req: { adminId: req.adminId, userId: req.user._id }
+
+            });
+        })
+
+};
+exports.postApproveRequest = (req, res, next) => {
+    const reqId = req.body.requestId;
+    //console.log(reqId);
+    Request.findById(reqId)
+        .then(request => {
+            //console.log(request.product);
+            const product = new Product(request.product);
+            product.save();
+            Request.deleteOne({ _id: reqId })
+                .then(() => {
+                    console.log('Product sent to log');
+                }).catch(err => {
+                    console.log(err);
+                });
+            const log = new Log({ request: request, adminApproval: req.user });
+            log.save();
+            console.log('Product Approved');
+            res.redirect('/admin/request');
+        }).catch(err => console.log(err));
+};
+exports.postDeleteReq = (req, res, next) => {
+    const reqId = req.body.requestId;
+    //console.log(reqId);
+    Request.deleteOne({ _id: reqId })
+        .then(() => {
+            console.log('Request deleted');
+            res.redirect('/admin/request')
+        })
+        .catch(err => console.log(err));
+};
+exports.getLog = (req, res, next) => {
+    Log.find()
+        .then(request => {
+            res.render('admin/log', {
+                requests: request,
+                path: 'admin/log',
+                pageTitle: 'Admin Log',
+                req: { adminId: req.adminId, userId: req.user._id }
+
+            })
+        }).catch(err => console.log(err));
 
 };

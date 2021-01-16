@@ -6,24 +6,25 @@ exports.getProducts = (req, res, next) => {
             res.render('shop/product-list', {
                 prods: products,
                 pageTitle: 'All Products',
-                path: '/products'
+                path: '/products',
+                req: { adminId: req.adminId, userId: (res.locals.isAuthenticated) ? req.user._id : req.user }
             });
         })
         .catch(err => console.log(err));
 };
 exports.getProduct = (req, res, next) => {
     const prodId = req.params.productId;
-
     Product.findById(prodId)
         .then((product) => {
             res.render('shop/product-detail', {
                 pageTitle: "Product Details",
                 product: product,
-                path: "/products"
+                path: "/products",
+                req: { adminId: req.adminId, userId: (res.locals.isAuthenticated) ? req.user._id : req.user }
             });
         })
         .catch(err => { console.log(err) });
-}
+};
 exports.getIndex = (req, res, next) => {
     Product.find()
         .then(products => {
@@ -31,6 +32,7 @@ exports.getIndex = (req, res, next) => {
                 prods: products,
                 pageTitle: 'Shop',
                 path: '/',
+                req: { adminId: req.adminId, userId: (res.locals.isAuthenticated) ? req.user._id : req.user }
             });
         })
         .catch(err => console.log(err));
@@ -45,7 +47,8 @@ exports.getCart = (req, res, next) => {
             res.render('shop/cart', {
                 pageTitle: 'Your Cart',
                 path: '/cart',
-                products: products
+                products: products,
+                req: { adminId: req.adminId, userId: req.user._id }
             });;
         })
         .catch(err => console.log(err));
@@ -75,7 +78,9 @@ exports.postCartDeleteProduct = (req, res, next) => {
 exports.getCheckout = (req, res, next) => {
     res.render('shop/checkout', {
         pageTitle: 'Checkout',
-        path: '/checkout'
+        path: '/checkout',
+        req: { adminId: req.adminId, userId: req.user._id }
+
     });
 };
 exports.getOrders = (req, res, next) => {
@@ -84,7 +89,9 @@ exports.getOrders = (req, res, next) => {
             res.render('shop/orders', {
                 pageTitle: 'Your Orders',
                 path: '/orders',
-                orders: orders
+                orders: orders,
+                req: { adminId: req.adminId, userId: req.user._id }
+
             });
         })
         .catch(err => console.log(err));

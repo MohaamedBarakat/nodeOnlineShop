@@ -1,0 +1,56 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css">
+    </head>
+
+    <body>
+        <%- include('../includes/navigation.ejs') %>
+
+            <main>
+                <% if (products.length > 0) { %>
+                    <div class="grid">
+                        <% for (let product of products) { %>
+                            <article class="card product-item">
+                                <div class="card__header">Product Creator :
+                                    <%=product.userName%>
+
+                                </div>
+                                <div class="card__header"> Creator Id :
+                                    <%=product.product.userId%>
+
+                                </div>
+                                <header class="card__header">
+                                    <h1 class="product__title">
+                                        <%= product.product.title %>
+                                    </h1>
+                                </header>
+                                <div class="card__image">
+                                    <img src="<%= product.product.imageUrl %>" alt="<%= product.product.title %>">
+                                </div>
+                                <div class="card__content">
+                                    <h2 class="product__price">$
+                                        <%= product.product.price %>
+                                    </h2>
+                                    <h5 class="product__description">
+                                        <%= product.product.description %>
+                                    </h5>
+                                </div>
+                                <div class="card__actions">
+                                    <form action="request" method="POST">
+                                        <input type="hidden" name="requestId" value="<%=product._id%>">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken%>">
+                                        <button class="btn">Approved</button>
+                                    </form>
+                                    <form action="delete-request" method="POST">
+                                        <input type="hidden" name="requestId" value="<%=product._id%>">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken%>">
+                                        <button class="btn">Delete</button>
+                                    </form>
+                                </div>
+                            </article>
+                            <% } %>
+                    </div>
+                    <% } else { %>
+                        <h1>No Products Found!</h1>
+                        <% } %>
+            </main>
+            <%- include('../includes/end.ejs') %>
