@@ -5,7 +5,11 @@
     <body>
         <%- include('../includes/navigation.ejs') %>
             <main>
+
+
+
                 <% if (requests.length > 0) { %>
+
                     <div class="grid">
                         <% for (let req of requests) { %>
                             <article class="card product-item">
@@ -13,19 +17,10 @@
                                     <div class="card__header">Product Creator :
                                         <%=req.request.userName%>
                                     </div>
-                                    <div class="card__header"> Creator Id :
-                                        <%=req.request.product.userId%>
-                                    </div>
-                                    <div class="card__header">Admin Approval Id :
-                                        <%=req.adminApproval%>
-                                    </div>
 
-                                    <h1 class="product__title">
-                                        <%= req.request.product.title %>
-                                    </h1>
                                 </header>
                                 <div class="card__image">
-                                    <img src="<%= req.request.product.imageUrl %>" alt="<%= req.request.product.title %>">
+                                    <img src="..<%= req.request.product.imageUrl.slice(6)%>" alt="<%= req.request.product.title %>">
                                 </div>
                                 <div class="card__content">
                                     <h2 class="product__price">$
@@ -38,6 +33,7 @@
                             </article>
                             <% } %>
                     </div>
+
                     <% } else { %>
                         <h1>No Products Found!</h1>
                         <% } %>

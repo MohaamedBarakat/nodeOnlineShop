@@ -12,7 +12,6 @@
                             <article class="card product-item">
                                 <div class="card__header">Product Creator :
                                     <%=product.userName%>
-
                                 </div>
                                 <div class="card__header"> Creator Id :
                                     <%=product.product.userId%>
@@ -24,7 +23,7 @@
                                     </h1>
                                 </header>
                                 <div class="card__image">
-                                    <img src="<%= product.product.imageUrl %>" alt="<%= product.product.title %>">
+                                    <img src="..<%= product.product.imageUrl.slice(6) %>" alt="<%= product.product.title %>">
                                 </div>
                                 <div class="card__content">
                                     <h2 class="product__price">$
@@ -50,7 +49,7 @@
                             <% } %>
                     </div>
                     <% } else { %>
-                        <h1>No Products Found!</h1>
+                        <h1>No Requested Products!</h1>
                         <% } %>
             </main>
             <%- include('../includes/end.ejs') %>

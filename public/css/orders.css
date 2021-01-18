@@ -27,3 +27,19 @@
     border: 1px solid #5e5c5c;
     color: #d3cece;
 }
+
+a:link {
+    color: rgb(168, 167, 202);
+}
+
+a:visited {
+    color: rgb(168, 167, 202);
+}
+
+a:hover {
+    color: rgb(174, 174, 206);
+}
+
+a:active {
+    color: blue;
+}

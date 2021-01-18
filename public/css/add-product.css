@@ -22,5 +22,17 @@
 
 .form-control input:focus,
 .form-control textarea:focus {
-    outline-color: #00695c;
+    outline-color: #a0a7a6;
+}
+
+.form-control input:valid,
+.form-control textarea:valid {
+    background-color: white;
+    outline-color: #bcd1cf;
+    opacity: 0.6;
+}
+
+.product-form input.invalid,
+.product-form textarea.invalid {
+    border-color: red;
 }

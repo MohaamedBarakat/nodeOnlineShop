@@ -14,6 +14,7 @@ router.post('/login', [
     check('email')
     .isEmail()
     .withMessage('Enter a valid E-mail.')
+    .normalizeEmail()
     .custom((value, { req }) => {
         User.findOne({ email: value })
             .then(user => {
@@ -25,6 +26,7 @@ router.post('/login', [
     body('password')
     .isLength({ min: 5, max: 24 })
     .withMessage('password should at least 8 Characters')
+    .trim()
 ], authController.postLogin);
 
 router.post('/logout', authController.postLogout);
@@ -34,9 +36,16 @@ router.get('/signup', authController.getSignup);
 router.post('/signup', [
     check('email')
     .isEmail()
-    .withMessage('Please Enter a valid email.'),
-    body('password').isLength({ min: 5, max: 24 }).withMessage('Please enter a password with at least 8 charatres').isAlphanumeric(),
-    body('confirmPassword').custom((value, { req }) => {
+    .withMessage('Please Enter a valid email.')
+    .normalizeEmail(),
+    body('password')
+    .isLength({ min: 5, max: 24 })
+    .withMessage('Please enter a password with at least 8 charatres')
+    .isAlphanumeric()
+    .trim(),
+    body('confirmPassword')
+    .trim()
+    .custom((value, { req }) => {
         if (value !== req.body.password) {
             throw new Error('Password have to match!');
         }

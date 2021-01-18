@@ -27,3 +27,16 @@
     text-align: center;
     color: rgb(196, 196, 196);
 }
+
+.succses-message {
+    text-align: center;
+    padding: 10px;
+    border: 1px solid white;
+    border-radius: 1rem;
+    background-color: rgb(17, 139, 93);
+    width: 20%;
+    height: 40px;
+    margin-left: 700px;
+    margin-right: 500px;
+    overflow: hidden;
+}

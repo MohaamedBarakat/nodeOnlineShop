@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const get500 = require('../util/error500');
 const bcrypt = require('bcryptjs');
 const api_key = "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";
 const sendgrid = require('@sendgrid/mail');
@@ -31,7 +32,7 @@ exports.postLogin = (req, res, next) => {
     const password = req.body.password;
     const errors = validationResult(req);
     if (errors.isEmpty()) {
-        console.log(errors.isEmpty());
+        //console.log(errors.isEmpty());
         return res.status(422).render('auth/login', {
             path: '/login',
             pageTitle: 'Login',
@@ -84,9 +85,9 @@ exports.postLogin = (req, res, next) => {
                     res.redirect('/login');
                 });;
         })
-        .catch(err => console.log(err));
-
-
+        .catch(err => {
+            return get500.get500Error(err);
+        });
 };
 
 exports.postLogout = (req, res, next) => {
@@ -212,10 +213,8 @@ exports.postReset = (req, res, next) => {
             })
 
         .catch(err => {
-            console.log(err);
-        })
-
-
+            return get500.get500Error(err);
+        });
     });
 };
 exports.getNewPassword = (req, res, next) => {
@@ -240,7 +239,7 @@ exports.getNewPassword = (req, res, next) => {
             })
         })
         .catch(err => {
-            console.log(err);
+            return get500.get500Error(err);
         });
 };
 exports.postNewPassword = (req, res, next) => {
@@ -265,6 +264,8 @@ exports.postNewPassword = (req, res, next) => {
             console.log("Password Updated");
             res.redirect('/login');
         })
-        .catch(err => { console.log(err); })
+        .catch(err => {
+            return get500.get500Error(err);
+        });
 
 };
