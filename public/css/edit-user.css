@@ -1,0 +1,22 @@
+.form-control {
+    margin: 1rem 0;
+}
+
+.form-control input {
+    background-color: grey;
+    display: block;
+    width: 20%;
+    height: 50px;
+    margin-bottom: 0.25rem;
+    border-radius: 5px;
+    padding: 1rem;
+}
+
+.form-control label {
+    display: block;
+}
+
+.form-control input {
+    border: 1px solid #000e4d;
+    font: inherit;
+}

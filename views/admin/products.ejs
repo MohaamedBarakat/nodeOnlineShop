@@ -10,35 +10,50 @@
                         <%=succsesMessage%>
                     </div>
                     <% } %>
+                        <div class="header">
+                            <a class="btn" class="<%= path === '/admin/add-product' ? 'active' : '' %>" href="/admin/add-product">+ Create Product
+                        </a>
+                        </div>
                         <% if (prods.length > 0) { %>
-                            <div class="grid">
+                            <h1>PRODUCTS</h1>
+                            <table id="customers">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>IMAGE</th>
+                                    <th>NAME</th>
+                                    <th>PRICE</th>
+                                    <th>CATEGORY</th>
+                                    <th></th>
+                                </tr>
                                 <% for (let product of prods) { %>
-                                    <article class="card product-item">
-                                        <header class="card__header">
-                                            <h1 class="product__title">
-                                                <%= product.title %>
-                                            </h1>
-                                        </header>
-                                        <div class="card__image">
-                                            <img src="..<%= product.imageUrl.slice(6) %>" alt="<%= product.title %>">
-                                        </div>
-                                        <div class="card__content">
-                                            <h2 class="product__price">$
-                                                <%= product.price %>
-                                            </h2>
-                                            <h5 class="product__description">
-                                                <%= product.description%>
-                                            </h5>
-                                        </div>
-                                        <div class="card__actions">
-                                            <a href='edit-product/<%=product._id%>?edit=true' class="btn">Edit</a>
-                                            <input type="hidden" value="<%=product._id%>" name="productId">
-                                            <input type="hidden" name="_csrf" value="<%= csrfToken%>">
-                                            <button class="btn" type="btn" onclick="deleteProduct(this)">Delete</button>
-                                        </div>
-                                    </article>
-                                    <% } %>
-                            </div>
+                                    <tr>
+                                        <td>
+                                            <%= product._id %>
+                                        </td>
+                                        <td>
+                                            <img class="card-image" src="..<%= product.imageUrl.slice(6) %>" alt="<%= product.title %>">
+                                        </td>
+                                        <td>
+                                            <%= product.title %>
+                                        </td>
+                                        <td>
+                                            <%= product.price %>
+                                        </td>
+                                        <td>
+                                            <%= product.category %>
+                                        </td>
+                                        <td>
+                                            <div class="card__actions">
+                                                <input type="hidden" value="<%=product._id%>" name="productId">
+                                                <input type="hidden" name="_csrf" value="<%= csrfToken%>">
+                                                <a href='edit-product/<%=product._id%>?edit=true' class="btn"><i class="fa fa-edit"></i></a>
+                                                <button class="btn-delete" type="btn" onclick="deleteProduct(this)"><i class="fa fa-trash"></i></button>
+                                            </div>
+
+                                        </td>
+                                    </tr>
+                                    <%}%>
+                            </table>
                             <% } else { %>
                                 <h1>No Products Found!</h1>
                                 <% } %>

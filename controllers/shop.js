@@ -3,8 +3,9 @@ const Order = require('../models/order');
 const get500 = require('../util/error500');
 const fs = require('fs');
 const path = require('path');
+const stripe = require('stripe')('sk_test_51IB8FaKlIpM1WFN7DSHK29bnxbjHxahJQlxc3my7VhQ4PoEG9vOAQuuE73zTvyjJXzpUjRWiy8D82gCv3i7w8H7I00zgrkpf4g');
 const PDFDocument = require('pdfkit');
-const ITEMS_PER_PAGE = 1;
+const ITEMS_PER_PAGE = 3;
 exports.getProducts = (req, res, next) => {
     const page = +req.query.page || 1;
     let totalItems;
@@ -51,6 +52,7 @@ exports.getProduct = (req, res, next) => {
         });
 };
 exports.getIndex = (req, res, next) => {
+    //console.log(req.session.user.admin);
     const page = +req.query.page || 1;
     let totalItems;
     Product.find()
@@ -100,10 +102,12 @@ exports.getCart = (req, res, next) => {
 };
 exports.postCart = (req, res, next) => {
     const prodId = req.body.productId;
+    const qty = +req.body.qty;
+    console.log(qty);
     Product.findById(prodId)
         .then(product => {
             //console.log(product);
-            return req.user.addToCart(product);
+            return req.user.addToCart(product, qty);
         })
         .then(result => {
             //console.log(result);
@@ -122,23 +126,45 @@ exports.postCartDeleteProduct = (req, res, next) => {
 }
 
 exports.getCheckout = (req, res, next) => {
+    let products;
+    let totalPrice;
     req.user
         .populate('cart.items.productId')
         .execPopulate()
         .then(user => {
             //console.log(user.cart.items);
-            const products = user.cart.items;
-            let totalPrice = 0;
+            totalPrice = 0;
+            products = user.cart.items;
             products.forEach(product => {
                 totalPrice += product.quantity * product.productId.price;
             });
-            console.log(totalPrice);
+            //console.log(totalPrice);
+            return stripe.checkout.sessions.create({
+                payment_method_types: ['card'],
+                line_items: products.map(p => {
+                    //console.log('hena?');
+                    return {
+                        name: p.productId.title,
+                        description: p.productId.description,
+                        amount: p.productId.price * 100,
+                        currency: 'usd',
+                        quantity: p.quantity
+                    };
+                }),
+                success_url: req.protocol + '://' + req.get('host') + '/checkout/success', // http://localhost:3000
+                cancel_url: req.protocol + '://' + req.get('host') + '/checkout/cancel'
+            });
+
+
+        }).then(session => {
+            //console.log('hena?');
             res.render('shop/checkout', {
                 products: products,
                 totalPrice: totalPrice,
                 pageTitle: 'Checkout',
                 path: '/checkout',
-                req: { adminId: req.adminId, userId: req.user._id }
+                req: { adminId: req.adminId, userId: req.user._id },
+                sessionId: session.id
             })
         })
         .catch(err => {
@@ -161,7 +187,56 @@ exports.getOrders = (req, res, next) => {
             return get500.get500Error(err);
         });
 };
-exports.postOrder = (req, res, next) => {
+exports.getCheckoutSuccess = (req, res, next) => {
+    //console.log("hena?")
+    req.user
+        .populate('cart.items.productId')
+        .execPopulate()
+        .then(user => {
+            //console.log("hena?")
+            //console.log(user.cart.items);
+            const products = user.cart.items.map(i => {
+                return { quantity: i.quantity, product: {...i.productId._doc } }
+            });
+            //console.log("hena?")
+            products.forEach(product => {
+                Product.findById(product.product._id)
+                    .then(prod => {
+                        if (prod.quantity - product.quantity < 0) {
+                            return res.render('/');
+                        }
+                        prod.quantity -= product.quantity;
+                        if (prod.quantity == 0) {
+                            prod.inStock = false;
+                        }
+                        prod.save();
+                    })
+                    .catch(err => console.log(err))
+
+            });
+            const order = new Order({
+                user: {
+                    name: req.user.name,
+                    email: req.user.email,
+                    userId: req.user
+                },
+                products: products
+            });
+            //console.log("hena?")
+            return order.save();
+        })
+        .then(result => {
+            //console.log("hena?")
+            return req.user.clearCart();
+        })
+        .then(() => {
+            res.redirect('/orders');
+        })
+        .catch(err => {
+            return next(err);
+        });
+};
+/*exports.postOrder = (req, res, next) => {
     req.user
         .populate('cart.items.productId')
         .execPopulate()
@@ -170,7 +245,7 @@ exports.postOrder = (req, res, next) => {
             const products = user.cart.items.map(i => {
                 return { quantity: i.quantity, product: {...i.productId._doc } }
             });
-            //console.log(products);
+            console.log(products);
             const order = new Order({
                 user: {
                     name: req.user.name,
@@ -190,7 +265,7 @@ exports.postOrder = (req, res, next) => {
         .catch(err => {
             return get500.get500Error(err);
         });
-};
+};*/
 exports.getInvoice = (req, res, next) => {
     const orderId = req.params.orderId;
     //console.log('we are in order');

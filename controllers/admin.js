@@ -1,5 +1,6 @@
 const Product = require('../models/product');
 const Request = require('../models/request');
+const User = require('..//models/user');
 const Log = require('../models/log-product');
 const get500 = require('../util/error500');
 const fileHelper = require('../util/file');
@@ -21,6 +22,14 @@ exports.postAddProduct = (req, res, next) => {
     const image = req.file;
     const price = req.body.price;
     const description = req.body.description;
+    const quantity = req.body.quantity;
+    const inStock = (quantity <= 0) ? false : true;
+    const reviews = {
+        score: 0,
+        numOfReviews: 0,
+        message: { score: 0, numOfReviews: 0, content: [] }
+    };
+
     const errors = validationResult(req);
     //console.log(imageUrl);
     if (!image) {
@@ -64,7 +73,11 @@ exports.postAddProduct = (req, res, next) => {
         price: price,
         description: description,
         imageUrl: imageUrl,
-        userId: req.user
+        userId: req.user,
+        quantity: quantity,
+        inStock: inStock,
+        reviews: reviews
+
     });
     const requestedProduct = new Request({
         product: product,
@@ -117,6 +130,7 @@ exports.postEditProduct = (req, res, next) => {
     const updatePrice = req.body.price;
     const image = req.file;
     const updeatedDescription = req.body.description;
+    const updatedQuantity = req.body.quantity;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).render('admin/edit-product', {
@@ -129,6 +143,7 @@ exports.postEditProduct = (req, res, next) => {
                 title: updateTitle,
                 price: updatePrice,
                 description: updeatedDescription,
+                quantity: updatedQuantity,
                 _id: prodId
             },
             req: { adminId: req.adminId, userId: req.user._id },
@@ -146,12 +161,17 @@ exports.postEditProduct = (req, res, next) => {
             product.category = updatedCategory;
             product.title = updateTitle
             product.price = updatePrice;
+            product.quantity = updatedQuantity;
+            if (product.quantity > 0) {
+                product.inStock = true;
+            } else {
+                product.inStock = false;
+            }
+            product.description = updeatedDescription;
             if (image) {
                 fileHelper.deleteFile(product.imageUrl);
                 product.imageUrl = image.path;
             }
-
-            product.description = updeatedDescription;
             return product.save()
                 .then(result => {
                     console.log("Updated Product");
@@ -251,6 +271,9 @@ exports.postApproveRequest = (req, res, next) => {
         .then(request => {
             //console.log(request.product);
             const product = new Product(request.product);
+            if (product.quantity <= 0) {
+                product.inStock = false;
+            }
             product.save();
             Request.deleteOne({ _id: reqId })
                 .then(() => {
@@ -297,3 +320,50 @@ exports.getLog = (req, res, next) => {
         });
 
 };
+
+exports.getUsers = (req, res, next) => {
+    //console.log('we are here!!');
+    //console.log(Log.find());
+    User.find()
+        .then(users => {
+            //console.log(' are we here!! ', users);
+            res.render('admin/users', {
+                users: users,
+                path: 'admin/users',
+                pageTitle: 'Admin Users',
+                req: { adminId: req.adminId, userId: req.user._id }
+            });
+        })
+        .catch(err => console.log(err));
+};
+exports.getEditUser = (req, res, next) => {
+    const userId = req.params.userId;
+    //console.log(userId);
+    User.findById(userId)
+        .then(user => {
+            console.log(' are we here!! ', user);
+            res.render('admin/edit-user', {
+                user: user,
+                path: 'admin/edit-user',
+                pageTitle: 'Admin Edit User',
+                req: { adminId: req.adminId, userId: req.user._id }
+            });
+        })
+        .catch(err => console.log(err));
+};
+exports.postUpdateUser = (req, res, next) => {
+    const admin = req.body.admin;
+    const userId = req.body.userId;
+    //console.log(userId, admin);
+
+    User.findById(userId)
+        .then(user => {
+            user.admin = (admin !== 'on') ? false : true;
+            user.save();
+            res.redirect('/admin/users');
+        })
+        .catch(err => console.log(err));
+
+
+
+}

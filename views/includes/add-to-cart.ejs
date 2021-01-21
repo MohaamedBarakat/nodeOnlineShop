@@ -1,7 +1,24 @@
 <%if (isAuthenticated){%>
     <form action="/cart" method="POST">
+        <div style="text-align:center; padding-bottom: 1rem;">
+            <p>Quantity : <select style="width: 50px;
+                height: 30px;
+                text-align-last: center;
+                font-weight: bold;" name="qty" id="qty" <%=(product.quantity <=0)? 'disabled': ''%> >
+                <%for(let i =1; i<=product.quantity; i++){%>
+                <option value="<%=i%>"><%=i%></option>
+                <%}%>
+              </select></p>
+            <hr>
+        </div>
+
         <input type="hidden" name="_csrf" value="<%= csrfToken%>">
-        <button class="btn" type="submit">Add To Cart</button>
+        <div style="padding-bottom: 1rem;">
+            <button style="width: 50%;
+            height: 75px;" class="btn" type="submit" <%=(product.quantity<=0)? 'disabled': ''%> >Add To Cart</button>
+        </div>
+
         <input type="hidden" name="productId" value="<%=product._id%>">
+        <input type="hidden" name="quantity" value="<%=product.quantity%>">
     </form>
     <%}%>

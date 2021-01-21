@@ -1,0 +1,55 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css">
+    </head>
+
+    <body>
+        <%- include('../includes/navigation.ejs') %>
+            <main>
+
+                <% if (users.length > 0) { %>
+                    <div class="header">
+                        <h1>USERS</h1>
+                    </div>
+                    <table id="customers">
+                        <tr>
+                            <th>ID</th>
+                            <th>NAME</th>
+                            <th>EMAIL</th>
+                            <th>ADMIN</th>
+                            <th></th>
+                        </tr>
+                        <% for (let ind=users.length-1;ind>=0 ;ind--) { %>
+                            <tr>
+                                <td>
+                                    <%= users[ind]._id %>
+                                </td>
+
+                                <td>
+                                    <%= users[ind].name %>
+                                </td>
+                                <td>
+                                    <%= users[ind].email %>
+                                </td>
+                                <td>
+                                    <%if(users[ind].admin){%>
+                                        <span>&#9989;</span>
+                                        <%}else{%>
+                                            <span> &#10060;</span>
+                                            <%}%>
+                                </td>
+                                <td>
+                                    <div class="card__actions">
+                                        <input type="hidden" value="<%=users[ind]._id%>" name="userId">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken%>">
+                                        <a href='users/<%=users[ind]._id%>' class="btn"><i class="fa fa-edit"></i></a>
+                                        <button class="btn-delete" type="btn" onclick="deleteUser(this)"><i class="fa fa-trash"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <%}%>
+                    </table>
+                    <% } %>
+
+            </main>
+            <%- include('../includes/end.ejs') %>
+                <script src="/js/admin.js"></script>

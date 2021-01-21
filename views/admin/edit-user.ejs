@@ -1,0 +1,26 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" type="text/css" href="/css/edit-user.css">
+
+    </head>
+
+    <body>
+        <%- include('../includes/navigation.ejs') %>
+            <main>
+                <div class="form-control">
+                    <label for="Name">Name</label>
+                    <input type="text" name="name" id="name" value="<%= user.name %>" readonly>
+                </div>
+                <div class="form-control">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" id="email" value="<%=user.email%>" readonly>
+                </div>
+                <form action="/admin/users" method="POST">
+                    <input type="checkbox" class="admin" name="admin" <%=user.admin ? 'checked': ''%>> Admin
+                    <input type="hidden" value="<%= user._id %>" name="userId">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken%>">
+                    <button class="btn" type="submit">Update</button>
+                </form>
+
+
+            </main>
+            <%- include('../includes/end.ejs') %>

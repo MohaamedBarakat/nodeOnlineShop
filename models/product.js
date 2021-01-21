@@ -23,10 +23,41 @@ const ProductSchema = new Schema({
         type: String,
         required: true
     },
+    quantity: {
+        type: Number,
+        required: true
+    },
+    inStock: {
+        type: Boolean,
+        required: true
+    },
     userId: {
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
+    },
+    reviews: {
+        score: {
+            type: Number,
+            required: true
+        },
+        numOfReviews: {
+            type: Number,
+            required: true
+        },
+        message: {
+            content: [{
+                userId: {
+                    type: String,
+                    ref: 'User',
+                    required: true
+                },
+                mess: {
+                    type: String,
+                    required: true
+                }
+            }]
+        }
     }
 
 });

@@ -10,7 +10,7 @@
 }
 
 .orders__item {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+    box-shadow: 0 2px 8px rgba(180, 171, 171, 0.26);
     padding: 1rem;
     margin-bottom: 1rem;
 }
@@ -25,19 +25,19 @@
     margin: 0.5rem 0;
     padding: 0.5rem;
     border: 1px solid #5e5c5c;
-    color: #d3cece;
+    color: #222121;
 }
 
 a:link {
-    color: rgb(168, 167, 202);
+    color: rgb(0, 0, 0);
 }
 
 a:visited {
-    color: rgb(168, 167, 202);
+    color: rgb(7, 7, 7);
 }
 
 a:hover {
-    color: rgb(174, 174, 206);
+    color: rgb(8, 8, 8);
 }
 
 a:active {

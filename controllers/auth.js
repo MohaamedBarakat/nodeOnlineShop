@@ -32,6 +32,7 @@ exports.postLogin = (req, res, next) => {
     const password = req.body.password;
     const errors = validationResult(req);
     if (errors.isEmpty()) {
+        //console.log(errors.array());
         //console.log(errors.isEmpty());
         return res.status(422).render('auth/login', {
             path: '/login',
@@ -63,6 +64,8 @@ exports.postLogin = (req, res, next) => {
                     if (doMatch) {
                         req.session.user = user;
                         req.session.isLoggedIn = true;
+                        req.session.isAdmin = user.admin;
+                        //console.log("User ", req.session.isAdmin);
                         return req.session.save((err) => {
                             console.log(err);
                             res.redirect('/');
@@ -120,6 +123,7 @@ exports.postSignup = (req, res, next) => {
     const name = req.body.name;
     const email = req.body.email;
     const password = req.body.password;
+    const admin = false;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).render('auth/signup', {
@@ -142,7 +146,8 @@ exports.postSignup = (req, res, next) => {
                 name: name,
                 email: email,
                 password: hashedPassword,
-                cart: { items: [] }
+                cart: { items: [] },
+                admin: admin
             });
             return user.save();
         })

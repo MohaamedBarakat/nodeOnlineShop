@@ -60,4 +60,10 @@ router.post('/delete-request', isAuth, adminController.postDeleteReq);
 
 router.get('/log', isAuth, adminController.getLog);
 
+router.get('/users', isAuth, adminController.getUsers);
+
+router.get('/users/:userId', isAuth, adminController.getEditUser);
+
+router.post('/users', isAuth, adminController.postUpdateUser);
+
 module.exports = router;

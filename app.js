@@ -55,7 +55,9 @@ app.use(flash());
 app.use((req, res, next) => {
     res.locals.isAuthenticated = req.session.isLoggedIn;
     res.locals.csrfToken = req.csrfToken();
-    req.adminId = '60037a4f6622e982f6be6dad';
+    req.adminId = '60089a6041faf626916a41eb';
+    res.locals.isAdmin = req.session.isAdmin;
+    //console.log(res.locals.isAdmin);
     next();
 
 });

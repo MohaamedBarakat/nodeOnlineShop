@@ -1,0 +1,56 @@
+* {
+    box-sizing: border-box;
+}
+
+.column {
+    background-color: #f7f7f7;
+    float: left;
+    padding: 10px;
+}
+
+.left {
+    width: 50%;
+}
+
+.right {
+    width: 25%;
+    padding-top: 2.5rem;
+}
+
+.middle {
+    width: 25%;
+}
+
+.image {
+    width: 500px;
+    height: 500px;
+}
+
+.cart-info {
+    border: 1px solid;
+    border-color: black;
+    border-radius: 5px;
+}
+
+.add-to-cart {
+    padding-top: 10px;
+}
+
+button:disabled {
+    background-color: grey;
+}
+
+.review div {
+    display: block;
+}
+
+.review select {
+    display: block;
+    margin-left: 23rem;
+    margin-top: 1rem;
+}
+
+.review button {
+    margin-top: 1rem;
+    height: 4rem;
+}

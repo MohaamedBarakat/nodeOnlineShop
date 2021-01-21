@@ -11,10 +11,8 @@ const router = express.Router();
 router.get('/login', authController.getLogin);
 
 router.post('/login', [
-    check('email')
+    body('email', 'Enter a valid E-mail.')
     .isEmail()
-    .withMessage('Enter a valid E-mail.')
-    .normalizeEmail()
     .custom((value, { req }) => {
         User.findOne({ email: value })
             .then(user => {
@@ -22,10 +20,10 @@ router.post('/login', [
                     return Promise.reject('Invalid email  or password');
                 }
             })
+            .catch(err => { console.log(err); })
     }),
-    body('password')
+    body('password', 'password should at least 8 Characters')
     .isLength({ min: 5, max: 24 })
-    .withMessage('password should at least 8 Characters')
     .trim()
 ], authController.postLogin);
 
@@ -36,8 +34,7 @@ router.get('/signup', authController.getSignup);
 router.post('/signup', [
     check('email')
     .isEmail()
-    .withMessage('Please Enter a valid email.')
-    .normalizeEmail(),
+    .withMessage('Please Enter a valid email.'),
     body('password')
     .isLength({ min: 5, max: 24 })
     .withMessage('Please enter a password with at least 8 charatres')

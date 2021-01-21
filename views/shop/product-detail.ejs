@@ -1,25 +1,70 @@
 <%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/split.css">
+    <link rel="stylesheet" href="/css/add-to-cart.css">
     </head>
 
     <body>
         <%- include('../includes/navigation.ejs') %>
             <main class="centered">
-                <div>
-
-                    <h1>Product Details</h1>
+                <div class="column left">
+                    <img class="image" src="..<%= product.imageUrl.slice(6) %>" alt="<%= product.title %>">
                     <hr>
-                    <div class="image">
-                        <img src="..<%= product.imageUrl.slice(6) %>" alt="<%= product.title %>">
-                    </div>
+                    <%if(null){%>
+                        <span class="fa fa-star checked"></span>
+                        <%}else{%>
+                            <h3>No Reviews For This Product</h3>
+                            <%for(let i =0; i<5;i++){%>
+                                <span class="fa fa-star"></span>
+                                <%}%>
+                                    <p style="margin-top: 4rem;"></p>
+                                    <%}%>
+                                        <%if(isAuthenticated){%>
+                                            <div class="review">
+                                                <hr>
+                                                <label for="review">Write Your Review</label>
+                                                <select name="messageReview" style="width: 150px; height: 50px; text-align-last: center; border-radius:0.5rem; ">
+                                                    <option value="excellent">Excellent</option>
+                                                    <option value="veryGood">Very Good</option>
+                                                    <option value="good">Good</option>
+                                                    <option value="bad">bad</option>
+                                                </select>
+                                                <select name="scoreProduct" style="width: 150px; height: 50px; text-align-last: center; border-radius:0.5rem;">
+                                            <%for(let i=1;i<6;i++){%>
+                                            <option value=" <%=i%>"><%=i%></option>
+                                            <%}%>
+                                        </select>
+                                                <button type='btn' class="btn">Submit Your Review</button>
+                                            </div>
 
+                                            <%}%>
+                </div>
 
-                    <h1>$
-                        <%=product.price %>
+                <div class="column middle">
+                    <h1 class="name">
+                        <%= product.title%>
                     </h1>
-                    <h5>
-                        <%=product.description%>
-                    </h5>
-                    <%- include('../includes/add-to-cart.ejs')%>
+                    <hr>
+                    <p> Price : $
+                        <%=product.price%>
+                    </p>
+                    <hr>
+                    <p>Description :
+                        <%=product.description  %>
+                    </p>
+                </div>
+                <div class="column right">
+                    <div class="cart-info">
+                        <p>Price :
+                            <%='$'+product.price%>
+                        </p>
+                        <hr>
+                        <p>Status :
+                            <%=(product.inStock)?'In Stock':'Out of Stock'%>
+                        </p>
+                        <hr>
+                        <div class="add-to-cart"></div>
+                        <%- include('../includes/add-to-cart.ejs')%>
+                    </div>
                 </div>
             </main>
 

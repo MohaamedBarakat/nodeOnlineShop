@@ -12,29 +12,32 @@
             </li>
             <% if (isAuthenticated) { %>
                 <li class="main-header__item">
-                    <a class="<%= path === '/cart' ? 'active' : '' %>" href="/cart">Cart</a>
+                    <a class="<%= path === '/cart' ? 'active' : '' %>" href="/cart"><i class="fa fa-shopping-cart"></i> Cart</a>
                 </li>
                 <li class="main-header__item">
                     <a class="<%= path === '/orders' ? 'active' : '' %>" href="/orders">Orders</a>
                 </li>
-                <li class="main-header__item">
-                    <a class="<%= path === '/admin/add-product' ? 'active' : '' %>" href="/admin/add-product">Add Product
-                    </a>
-                </li>
-                <li class="main-header__item">
-                    <a class="<%= path === '/admin/products' ? 'active' : '' %>" href="/admin/products">Admin Products
-                    </a>
-                </li>
-                <%if(req.adminId.toString()===req.userId.toString()){%>
+                <%if(isAdmin){%>
                     <li class="main-header__item">
-                        <a class="<%= path === '/admin/request' ? 'active' : '' %>" href="/admin/request">Products requests
-                    </a>
-                    </li>
-                    <li class="main-header__item">
-                        <a class="<%= path === '/admin/log' ? 'active' : '' %>" href="/admin/log">Products log
-                    </a>
+                        <div class="dropdown" class="main-header__item">
+                            <button class="dropbtn">Admin <i class="fas fa-sort-down"></i></button>
+                            <div class="dropdown-content">
+                                <a class="<%= path === '/admin/products' ? 'active' : '' %>" href="/admin/products">Products
+                                    </a>
+                                <%if(req.adminId.toString()===req.userId.toString()){%>
+                                    <a class="<%= path === '/admin/users' ? 'active' : '' %>" href="/admin/users">Users
+                                    </a>
+                                    <a class="<%= path === '/admin/request' ? 'active' : '' %>" href="/admin/request"> Requests     
+                                        </a>
+                                    <a class="<%= path === '/admin/log' ? 'active' : '' %>" href="/admin/log">log
+                                        </a>
+                                    <%}%>
+
+                            </div>
+                        </div>
                     </li>
                     <%}%>
+
                         <% } %>
         </ul>
         <ul class="main-header__item-list">

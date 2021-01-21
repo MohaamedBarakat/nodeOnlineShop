@@ -1,0 +1,16 @@
+.add-to-cart select {
+    width: 50px;
+    height: 30px;
+    text-align-last: center;
+    font-weight: bold;
+}
+
+.add-to-cart div {
+    /*padding: 0.5rem;*/
+    padding-bottom: 1rem;
+}
+
+.add-to-cart button {
+    width: 50%;
+    height: 75px;
+}
