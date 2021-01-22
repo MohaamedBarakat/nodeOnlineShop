@@ -5,7 +5,7 @@
     <nav class="main-header__nav">
         <ul class="main-header__item-list">
             <li class="main-header__item">
-                <a class="<%= path === '/' ? 'active' : '' %>" href="/">Shop</a>
+                <a class="<%= path === '/' ? 'active' : '' %>" href="/">Shop </a>
             </li>
             <li class="main-header__item">
                 <a class="<%= path === '/products' ? 'active' : '' %>" href="/products">Products</a>
@@ -20,7 +20,7 @@
                 <%if(isAdmin){%>
                     <li class="main-header__item">
                         <div class="dropdown" class="main-header__item">
-                            <button class="dropbtn">Admin <i class="fas fa-sort-down"></i></button>
+                            <button class="dropbtn">Admin <i class="fa fa-angle-down"></i></button>
                             <div class="dropdown-content">
                                 <a class="<%= path === '/admin/products' ? 'active' : '' %>" href="/admin/products">Products
                                     </a>

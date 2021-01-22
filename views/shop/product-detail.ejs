@@ -9,34 +9,44 @@
                 <div class="column left">
                     <img class="image" src="..<%= product.imageUrl.slice(6) %>" alt="<%= product.title %>">
                     <hr>
-                    <%if(null){%>
-                        <span class="fa fa-star checked"></span>
-                        <%}else{%>
-                            <h3>No Reviews For This Product</h3>
-                            <%for(let i =0; i<5;i++){%>
-                                <span class="fa fa-star"></span>
+                    <div id="refreshDiv">
+                        <%if(product.reviews.message.content.length > 0){%>
+                            <p>Product Review :</p>
+                            <%for(let ind = 1; ind < Math.ceil(product.reviews.score/product.reviews.numOfReviews) + 1; ind++){%>
+                                <span class="fa fa-star checked"></span>
                                 <%}%>
-                                    <p style="margin-top: 4rem;"></p>
-                                    <%}%>
-                                        <%if(isAuthenticated){%>
-                                            <div class="review">
-                                                <hr>
-                                                <label for="review">Write Your Review</label>
-                                                <select name="messageReview" style="width: 150px; height: 50px; text-align-last: center; border-radius:0.5rem; ">
-                                                    <option value="excellent">Excellent</option>
-                                                    <option value="veryGood">Very Good</option>
-                                                    <option value="good">Good</option>
-                                                    <option value="bad">bad</option>
-                                                </select>
-                                                <select name="scoreProduct" style="width: 150px; height: 50px; text-align-last: center; border-radius:0.5rem;">
-                                            <%for(let i=1;i<6;i++){%>
-                                            <option value=" <%=i%>"><%=i%></option>
+                                    <%}else{%>
+                                        <h3>No Reviews For This Product</h3>
+                                        <%for(let i =0; i<5;i++){%>
+                                            <span class="fa fa-star"></span>
                                             <%}%>
-                                        </select>
-                                                <button type='btn' class="btn">Submit Your Review</button>
-                                            </div>
-
-                                            <%}%>
+                                                <p style="margin-top: 4rem;"></p>
+                                                <%}%>
+                                                    <%if(isAuthenticated){%>
+                                                        <%if(!product.reviews.message.content.find(({ userId }) => userId.toString() === req.userId.toString())){%>
+                                                            <div class="review">
+                                                                <hr>
+                                                                <label for="review">Write Your Review</label>
+                                                                <select name="messageReview" style="width: 150px; height: 50px; text-align-last: center; border-radius:0.5rem; ">
+                                                        <option value="excellent">Excellent</option>
+                                                        <option value="veryGood">Very Good</option>
+                                                        <option value="good">Good</option>
+                                                        <option value="bad">bad</option>
+                                                    </select>
+                                                                <select name="scoreProduct" style="width: 150px; height: 50px; text-align-last: center; border-radius:0.5rem;">
+                                                <%for(let i=1;i<6;i++){%>
+                                                <option value=" <%=i%>"><%=i%></option>
+                                                <%}%>
+                                            </select>
+                                                                <input type="hidden" name="prodId" value="<%=product._id%>">
+                                                                <input type="hidden" name="score" value="<%=product.reviews.score%>">
+                                                                <input type="hidden" name="numOfReviews" value="<%=product.reviews.numOfReviews%>">
+                                                                <input type="hidden" name="userId" value="<%=req.userId%>">
+                                                                <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                                                                <button type='button' class="btn" onclick="addReview(this)">Submit Your Review</button> </div>
+                                                            <%}%>
+                                                                <%}%>
+                    </div>
                 </div>
 
                 <div class="column middle">
@@ -69,3 +79,4 @@
             </main>
 
             <%- include('../includes/end.ejs') %>
+                <script src="/js/admin.js"></script>

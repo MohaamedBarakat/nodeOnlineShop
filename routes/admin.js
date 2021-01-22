@@ -66,4 +66,6 @@ router.get('/users/:userId', isAuth, adminController.getEditUser);
 
 router.post('/users', isAuth, adminController.postUpdateUser);
 
+router.delete('/users/:userId', isAuth, adminController.deleteUser);
+
 module.exports = router;

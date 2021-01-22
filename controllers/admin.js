@@ -367,3 +367,11 @@ exports.postUpdateUser = (req, res, next) => {
 
 
 }
+exports.deleteUser = (req, res, next) => {
+    const userId = req.params.userId;
+    User.deleteOne({ _id: userId })
+        .then(() => {
+            res.json({ message: 'success user deleted' });
+        })
+        .catch(err => console.log(err))
+}

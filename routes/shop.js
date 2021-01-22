@@ -32,4 +32,6 @@ router.get('/checkout/success', isAuth, shopController.getCheckoutSuccess);
 
 router.get('/checkout/cancel', shopController.getCheckout);
 
+router.patch('/products/:productId', shopController.patchNewReview);
+
 module.exports = router;

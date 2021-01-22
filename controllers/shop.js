@@ -306,3 +306,27 @@ exports.getInvoice = (req, res, next) => {
         })
 
 };
+exports.patchNewReview = (req, res, next) => {
+    const prodId = req.params.productId;
+    const totalScore = req.body.totalScore;
+    const message = req.body.message;
+    const userId = req.body.userId;
+    //console.log(req.body);
+    Product.findById(prodId)
+        .then(product => {
+            product.reviews.score = totalScore;
+            product.reviews.numOfReviews += 1;
+            const messageReviews = product.reviews.message.content;
+            const newReview = { userId: userId, mess: message };
+            messageReviews.push(newReview);
+            //console.log(messageReviews);
+            //console.log(messageReviews.find(({ userId }) => userId === "60089a6041faf626916a41eb"));
+            product.reviews.message.content = messageReviews;
+            //console.log(product.reviews.message.content);
+            //console.log(product.reviews.message.content.find(({ userId }) => userId === "60089a6041faf626916a41eb"));
+            product.save();
+            res.json({ message: 'success', messageReviews: messageReviews });
+        })
+        .catch(err => console.log(err));
+
+}

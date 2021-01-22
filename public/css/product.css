@@ -89,3 +89,21 @@
     text-align: center;
     padding: 0.8rem;
 }
+
+.newest {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+.newest img {
+    display: inline-block;
+    width: 700px;
+    height: 500px;
+    padding: 1rem;
+}
+
+.newest img:hover {
+    opacity: 1;
+}
