@@ -1,0 +1,43 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/signup.css">
+    <link rel="stylesheet" href="/css/auth.css">
+    </head>
+
+    <body>
+        <%- include('../includes/navigation.ejs') %>
+            <%- include('../includes/progress-checkout.ejs') %>
+                <main>
+                    <div class="form-signup" style="border: 0;">
+                        <form class="login-form" action="/personal-contact" method="POST">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken%>">
+                            <div class="form-control">
+                                <label for="name">Name</label>
+                                <input type="text" name="name" id="name" value="<%=user.name%>" readonly>
+                            </div>
+                            <div class="form-control">
+                                <label for="mobile">Mobile Number</label>
+                                <input type="text" name="mobile" id="mobile" placeholder="Enetr Your Mobile" value="<%=user.mobile%>" required>
+                            </div>
+                            <div class="form-control">
+                                <label for="address">Address</label>
+                                <input type="text" name="address" id="address" placeholder="Enetr Your Addess" value="<%=user.address%>" required>
+                            </div>
+                            <div class="form-control">
+                                <label for="city">City</label>
+                                <select name="city" id="city">
+                                <option value="<%=(user.city)?user.city:'select city'%>" <%=(!user.city)?'disabled':''%>><%=(user.city)?user.city:'Select City'%></option>
+                                <%for(let city of cities){%>
+                                <option value="<%=city.city_name%>"><%=city.city_name%></option>
+                               <%}%>
+                           </select>
+                            </div>
+                            <div class="form-control">
+                                <label for="zip">Zip Code</label>
+                                <input type="text" name="zip" id="zip" placeholder="Enetr Your zip Code" value="<%=user.zip%>" required>
+                            </div>
+                            <button class="btn" type="submit">Continue</button>
+                        </form>
+                    </div>
+
+                </main>
+                <%- include('../includes/end.ejs') %>

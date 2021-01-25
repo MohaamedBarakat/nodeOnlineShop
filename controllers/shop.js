@@ -1,11 +1,13 @@
 const Product = require('../models/product');
 const Order = require('../models/order');
 const get500 = require('../util/error500');
+const User = require('../models/user');
 const fs = require('fs');
 const path = require('path');
 const stripe = require('stripe')('sk_test_51IB8FaKlIpM1WFN7DSHK29bnxbjHxahJQlxc3my7VhQ4PoEG9vOAQuuE73zTvyjJXzpUjRWiy8D82gCv3i7w8H7I00zgrkpf4g');
 const PDFDocument = require('pdfkit');
-const ITEMS_PER_PAGE = 3;
+const cities = require('egypt-cities');
+const ITEMS_PER_PAGE = 4;
 exports.getProducts = (req, res, next) => {
     const page = +req.query.page || 1;
     let totalItems;
@@ -128,6 +130,8 @@ exports.postCartDeleteProduct = (req, res, next) => {
 exports.getCheckout = (req, res, next) => {
     let products;
     let totalPrice;
+    const mobile = req.body.mobile;
+    console.log(req.body);
     req.user
         .populate('cart.items.productId')
         .execPopulate()
@@ -180,7 +184,6 @@ exports.getOrders = (req, res, next) => {
                 path: '/orders',
                 orders: orders,
                 req: { adminId: req.adminId, userId: req.user._id }
-
             });
         })
         .catch(err => {
@@ -236,36 +239,6 @@ exports.getCheckoutSuccess = (req, res, next) => {
             return next(err);
         });
 };
-/*exports.postOrder = (req, res, next) => {
-    req.user
-        .populate('cart.items.productId')
-        .execPopulate()
-        .then(user => {
-            //console.log(user.cart.items);
-            const products = user.cart.items.map(i => {
-                return { quantity: i.quantity, product: {...i.productId._doc } }
-            });
-            console.log(products);
-            const order = new Order({
-                user: {
-                    name: req.user.name,
-                    email: req.user.email,
-                    userId: req.user
-                },
-                products: products
-            });
-            return order.save();
-        })
-        .then(result => {
-            return req.user.clearCart();
-        })
-        .then(() => {
-            res.redirect('/orders');
-        })
-        .catch(err => {
-            return get500.get500Error(err);
-        });
-};*/
 exports.getInvoice = (req, res, next) => {
     const orderId = req.params.orderId;
     //console.log('we are in order');
@@ -292,7 +265,17 @@ exports.getInvoice = (req, res, next) => {
             pdfDoc.fontSize(26).text('Hello ' + req.user.name, {
                 underline: true
             });
-            pdfDoc.text('------------------------');
+            pdfDoc.text(' ');
+            pdfDoc.fontSize(18).text('Address :' + req.user.address, {
+                underline: true
+            });
+            pdfDoc.text(' ');
+
+            pdfDoc.fontSize(18).text('Phone Number :' + req.user.mobile, {
+                underline: true
+            });
+            pdfDoc.text(' ');
+            pdfDoc.fontSize(26).text('------------------------');
             let totalPrice = 0;
             order.products.forEach(prod => {
                 totalPrice += prod.quantity * prod.product.price;
@@ -329,4 +312,50 @@ exports.patchNewReview = (req, res, next) => {
         })
         .catch(err => console.log(err));
 
-}
+};
+exports.getProductAPI = (req, res, next) => {
+    //console.log('hereeeeee');
+    Product.find()
+        .limit(4)
+        .then(products => {
+            res.json({ products: products });
+        })
+        .catch(err => console.log(err))
+
+};
+exports.getPersonalInfo = (req, res, next) => {
+    //console.log(req.user);
+    //console.log(cities.localCities());
+    res.render('shop/personal-info', {
+        pageTitle: 'Your Personal Contact',
+        path: '/personal-info',
+        user: req.user,
+        req: { adminId: req.adminId, userId: (res.locals.isAuthenticated) ? req.user._id : req.user },
+        cities: cities.localCities()
+
+
+    })
+};
+exports.postPersonalInfo = (req, res, next) => {
+    console.log(req.body);
+    const mobile = req.body.mobile;
+    const address = req.body.address;
+    const city = req.body.city;
+    const zip = req.body.zip;
+    //console.log('sounds good', req.user);
+    User.findById(req.user._id)
+        .then(user => {
+            //console.log('sounds good');
+            if (!user) {
+                return res.redirect('/');
+            }
+            user.mobile = mobile;
+            user.address = address;
+            user.city = city;
+            user.zip = zip;
+            user.save();
+            res.redirect('/checkout');
+        })
+        .catch(err => console.log(err));
+
+};

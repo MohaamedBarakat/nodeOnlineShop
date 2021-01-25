@@ -20,6 +20,7 @@ exports.postAddProduct = (req, res, next) => {
     const category = req.body.category;
     const title = req.body.title;
     const image = req.file;
+    //const image = req.files;
     const price = req.body.price;
     const description = req.body.description;
     const quantity = req.body.quantity;
@@ -29,7 +30,7 @@ exports.postAddProduct = (req, res, next) => {
         numOfReviews: 0,
         message: { score: 0, numOfReviews: 0, content: [] }
     };
-
+    //console.log(image);
     const errors = validationResult(req);
     //console.log(imageUrl);
     if (!image) {

@@ -28,18 +28,18 @@
     color: #222121;
 }
 
-a:link {
+.invoice a:link {
     color: rgb(0, 0, 0);
 }
 
-a:visited {
-    color: rgb(7, 7, 7);
+.invoice a:visited {
+    color: rgb(0, 0, 0);
 }
 
-a:hover {
-    color: rgb(8, 8, 8);
+.invoice a:hover {
+    color: rgb(0, 0, 0);
 }
 
-a:active {
-    color: blue;
+.invoice a:active {
+    color: rgb(3, 3, 3);
 }

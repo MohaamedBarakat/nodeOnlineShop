@@ -8,9 +8,13 @@
             <main>
                 <% if (prods.length > 0) { %>
                     <% for (let product of prods.slice(0,1)) { %>
+                        <p id="titleUp" style="font-size: 19px; font-weight: bold; text-align: center;">
+                            <%=product.title%>
+                        </p>
+                        <hr>
                         <div class="newest">
                             <button onclick="minusImage(this)" type="button"><i class="fa fa-angle-left" style="font-size:36px"></i></button>
-                            <a href="/products/<%=product._id%>"><img src="..<%= product.imageUrl.slice(6) %>" alt="<%= product.title %>"></a>
+                            <a href="/products/<%=product._id%>" id="imageLink"><img id="imageProd" src="..<%= product.imageUrl.slice(6) %>" alt="<%= product.title %>"></a>
                             <button onclick="plusImage(this)" type="button"><i class="fa fa-angle-right" style="font-size:36px"></i></i></button>
 
                         </div>
@@ -26,7 +30,9 @@
                                             </h1>
                                         </header>
                                         <div class="card__image">
-                                            <img src="..<%= product.imageUrl.slice(6) %>" alt="<%= product.title %>">
+                                            <a href="/products/<%=product._id%>" id="imageLink">
+                                                <img src="..<%= product.imageUrl.slice(6) %>" alt="<%= product.title %>">
+                                            </a>
                                         </div>
                                         <div class="card__content">
                                             <h2 class="product__price">
@@ -34,7 +40,7 @@
                                                 <%= product.price %>
                                             </h2>
                                             <h5 class="product__description">
-                                                <%= product.description %>
+                                                <%= product.description.slice(0,300) %>......
                                             </h5>
                                         </div>
                                         <div class="card__actions">

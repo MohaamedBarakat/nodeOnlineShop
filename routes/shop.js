@@ -6,6 +6,8 @@ const shopController = require('../controllers/shop');
 
 const isAuth = require('../middleware/is-auth');
 
+const { body } = require('express-validator/check');
+
 const router = express.Router();
 
 router.get('/', shopController.getIndex);
@@ -20,8 +22,6 @@ router.post('/cart', isAuth, shopController.postCart);
 
 router.post('/cart-delete-item', isAuth, shopController.postCartDeleteProduct);
 
-//router.post('/create-order', isAuth, shopController.postOrder);
-
 router.get('/orders', isAuth, shopController.getOrders);
 
 router.get('/orders/:orderId', isAuth, shopController.getInvoice);
@@ -33,5 +33,14 @@ router.get('/checkout/success', isAuth, shopController.getCheckoutSuccess);
 router.get('/checkout/cancel', shopController.getCheckout);
 
 router.patch('/products/:productId', shopController.patchNewReview);
+
+router.get('/product/api', shopController.getProductAPI);
+
+router.get('/personal-contact', [
+    body('mobile', 'Invalid mobile number')
+    .isLength({ min: 11, max: 11 })
+], shopController.getPersonalInfo);
+
+router.post('/personal-contact', shopController.postPersonalInfo);
 
 module.exports = router;

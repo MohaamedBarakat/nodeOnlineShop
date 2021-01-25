@@ -26,7 +26,11 @@ const userSchema = new Schema({
     admin: {
         type: Boolean,
         required: true
-    }
+    },
+    address: String,
+    mobile: String,
+    zip: String,
+    city: String
 });
 userSchema.methods.addToCart = function(product, quantity) {
     const cartProductIndex = this.cart.items.findIndex(cartProduct => {

@@ -41,6 +41,7 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 app.use(bodyParser.urlencoded({ extended: false }));
+//app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).array('image', 8));
 app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single('image'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
@@ -95,7 +96,7 @@ app.use(shopRoutes);
 app.use(authRoutes);
 
 app.use(errorController.get404);
-app.use('/500', errorController.get500);
+//app.use('/500', errorController.get500);
 
 app.use((error, req, res, next) => {
     res.redirect('/500');

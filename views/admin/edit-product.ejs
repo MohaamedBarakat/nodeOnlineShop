@@ -16,7 +16,7 @@
                             <div class="form-control">
                                 <label for="category">Category</label>
                                 <select name="category" id="category">
-                            <option value="select-catgory" disabled>Select Category</option>
+                            <option value="<%=(edit)?product.category:'select category'%>" <%=(!edit)?'disabled':''%> > <%=(edit)?product.category.charAt(0).toUpperCase()+product.category.slice(1):'Select Category'%> </option>
                             <option value="book">Book</option>
                             <option value="electronic">Electronic</option>
                             <option value="car">Car</option>
@@ -33,7 +33,7 @@
                             </div>-->
                             <div class="form-control">
                                 <label for="image">Image URL</label>
-                                <input type="file" name="image" id="image" required>
+                                <input multiple="true" type="file" name="image" id="image" required>
                             </div>
                             <div class="form-control">
                                 <label for="price">Price</label>

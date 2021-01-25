@@ -6,6 +6,7 @@ const deleteProduct = (btn) => {
     fetch('/admin/product/' + prodId, {
             method: 'DELETE',
             headers: {
+                'Content-Type': 'application/json',
                 'csrf-token': csrf
             }
         })
@@ -27,18 +28,18 @@ const deleteProduct = (btn) => {
 }
 const deleteUser = (btn) => {
     console.log("delete User button ", btn);
-
     const userId = btn.parentNode.querySelector('[name=userId]').value;
     const csrf = btn.parentNode.querySelector('[name=_csrf]').value;
     const productElement = btn.closest('tr');
     fetch('/admin/users/' + userId, {
             method: 'DELETE',
             headers: {
+                'Content-Type': 'application/json',
                 'csrf-token': csrf
             }
         })
         .then((result) => {
-            console.log('result', result);
+            //console.log('result', result);
             //console.log(result.json());
             return result.json();
         })

@@ -4,9 +4,9 @@
 }
 
 body {
-    /*background-image: url("../images/background.jpg");*/
+    background-image: url("../images/nadine-marfurt-FOm-mSk2YdY-unsplash.jpg");
     background-repeat: no-repeat;
-    background-color: #dddddd;
+    background-color: #f7f7f7;
     background-size: cover;
     padding: 0;
     margin: 0;
@@ -349,8 +349,4 @@ form {
 
 .dropdown:hover .dropdown-content {
     display: block;
-}
-
-.dropdown:hover .dropbtn {
-    background-color: #3e8e41;
 }
